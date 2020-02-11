@@ -1,0 +1,65 @@
+# -*- mode:tcl -*-
+#------------------------------------------------------------------------------
+# generate 105 MeV/c electrons and make STNTUPLE
+#------------------------------------------------------------------------------
+BEGIN_PROLOG
+  bgHitFiles : @nil
+END_PROLOG
+
+#include "Stntuple/fcl/templates.fcl"
+
+process_name : MuonCaptureProtons2020
+
+source       : { module_type : EmptyEvent   }
+outputs      : { @table::Stntuple.outputs   }
+
+physics : {
+    producers: { @table::Stntuple.producers }
+    filters  : { @table::Stntuple.filters   }
+    analyzers: { @table::Stntuple.analyzers }
+
+    p1       : [ @sequence::Stntuple.gen_g4_time_map 
+		]
+    
+    trigger_paths : [ p1  ]
+    out           : [     ]
+    end_paths     : [ out ]
+}
+#------------------------------------------------------------------------------
+# uncomment the next 2 lines if you want the DST (.art) file to be written out
+#-----------------------------------------------------------------------------
+physics.out                               : [ detectorOutput ]
+outputs.detectorOutput.SelectEvents       : [ p1 ]
+#------------------------------------------------------------------------------
+# output file names 
+#------------------------------------------------------------------------------
+services.TFileService.fileName            : "nts._USER_.proton_absorber.754_0000.000001.root"
+physics.filters.InitStntuple.histFileName : "nts._USER_.proton_absorber.754_0000.000001.stn"
+outputs.detectorOutput.fileName           : "sim._USER_.proton_absorber.754_0000.000001.art"
+#------------------------------------------------------------------------------
+# uncomment to avoid waisting time on the initialization of detailed neutron 
+# cross sections - that shouldn't affect the electron simulation 
+#------------------------------------------------------------------------------
+services.GeometryService.inputFile              : "proton_absorber/754_0000/geom_754_0000.txt"
+
+physics.producers.generate                      : { @table::Stntuple.producers.MuonCaptureProtonGun
+    physics : { @table::StoppedParticleReactionGun.physics
+	pdgId            : 2212
+	spectrumShape    : "ejectedProtons"
+	spectrumVariable : "kineticEnergy"
+	nbins            : 1050
+    }
+}
+
+physics.producers.g4run.physics.physicsListName : "QGSP_BERT"
+
+physics.filters.detectorFilter.cutMomentumMin   : 1.
+#------------------------------------------------------------------------------
+# debugging
+#------------------------------------------------------------------------------
+# physics.producers.CalPatRecDem.diagLevel : 1
+# physics.producers.CalPatRecDmm.diagLevel : 1
+# physics.producers.AvikPID.debugLevel     : 100
+#------------------------------------------------------------------------------
+# everything below is appended by murat/scripts/submit_mu2e_job
+#------------------------------------------------------------------------------

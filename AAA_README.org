@@ -1,0 +1,57 @@
+#
+
+# dataset definition:
+|----------+--------------+---------------+-----------------+-----------------+----------|
+| dsid     | sim particle | spectrum      | proton absorber | path            | comments |
+|----------+--------------+---------------+-----------------+-----------------+----------|
+| 754_0000 | p            | hungerford    | default         | gen_g4_time_map |          |
+| 754_0001 | p            | hungerford    | none            | gen_g4_time_map |          |
+| 754_0002 | p            | '2020         | default         | gen_g4_time_map |          |
+| 754_0003 | p            | '2020         | none            | gen_g4_time_map |          |
+| 754_0100 | e-           | CeMLeadingLog | default         | full stntupling |          |
+| 754_0101 | e-           | CeMLeadingLog | none            | full stntupling |          |
+|----------+--------------+---------------+-----------------+-----------------+----------|
+
+* *calculation of N(ejected protons)/pulse*              
+** *protons per pulse default* : about 2200                
+#+begin_src python :session :var beam_intensity=1.0
+from math import *
+pot_per_pulse      = 3.9e7;                               # nominal beam 
+muon_stops_per_pot = 1.87e-3;
+protons_per_stop   = 0.05;
+stops_per_pulse    = pot_per_pulse*muon_stops_per_pot;
+capture_prob       = 0.61;
+captures_per_pulse = stops_per_pulse*capture_prob;
+protons_per_pulse  = captures_per_pulse*protons_per_stop;
+("protons per pulse = %10.2f "%protons_per_pulse)
+#+end_src
+
+#+RESULTS:
+: protons per pulse =    2224.36
+
+** *protons per pulse '2020*   : 800 at 0.5, 1280 at 0.8   
+#+begin_src python :session :var intensity_fraction=0.5
+from math import *
+pot_per_pulse      = 3.9e7*intensity_fraction;   # 
+muon_stops_per_pot = 1.5e-3;
+protons_per_stop   = 0.045;
+stops_per_pulse    = pot_per_pulse*muon_stops_per_pot;
+capture_prob       = 0.61;
+captures_per_pulse = stops_per_pulse*capture_prob;
+protons_per_pulse  = captures_per_pulse*protons_per_stop;
+("protons per pulse = %10.2f "%protons_per_pulse)
+#+end_src
+
+#+RESULTS:
+: protons per pulse =     802.91 
+* *work log*                                             
+  <2020-02-11 Tue> 
+  in the stntupling job need 
+
+physics.filters.StntupleMakerDe.makeStepPointMC          : 1
+physics.filters.StntupleMakerDe.spmcBlockName            : [ "SpmcBlock"               , "SpmcBlockVDet"                  ]
+physics.filters.StntupleMakerDe.spmcCollTag              : [ "compressDigiMCs:tracker" , "compressDigiMCs:virtualdetector"]
+physics.filters.StntupleMakerDe.statusG4Tag              : [ "g4run"                   , "g4run"                          ]
+
+  track analysis module needs hits on virtual detectors, may want also to look at the 
+  StepPointsMC in the tracker

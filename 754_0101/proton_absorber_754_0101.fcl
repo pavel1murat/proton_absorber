@@ -1,0 +1,79 @@
+# -*- mode:tcl -*-
+#------------------------------------------------------------------------------
+# generate 105 MeV/c electrons and make STNTUPLE
+#------------------------------------------------------------------------------
+BEGIN_PROLOG
+  bgHitFiles : @nil
+END_PROLOG
+
+#include "Stntuple/fcl/templates.fcl"
+
+process_name : MuonCaptureProtons2020
+
+source       : { module_type : EmptyEvent   }
+outputs      : { @table::Stntuple.outputs   }
+
+physics : {
+    producers: { @table::Stntuple.producers }
+    filters  : { @table::Stntuple.filters   }
+    analyzers: { @table::Stntuple.analyzers }
+
+    p1       : [ @sequence::Stntuple.gen_g4_time_map,
+		 @sequence::Stntuple.digis          ,
+		 @sequence::Stntuple.trk_hit_reco   ,
+		 @sequence::Stntuple.cal_reco       ,
+		 @sequence::Stntuple.reco_De        ,
+		 @sequence::Stntuple.crv_reco       ,
+		 @sequence::Stntuple.stnmaker_De
+		]
+    
+    trigger_paths : [ p1  ]
+    out           : [     ]
+    end_paths     : [ out ]
+}
+#------------------------------------------------------------------------------
+# uncomment the next 2 lines if you want the DST (.art) file to be written out
+#-----------------------------------------------------------------------------
+physics.out                               : [ detectorOutput ]
+outputs.detectorOutput.SelectEvents       : [ p1 ]
+#------------------------------------------------------------------------------
+# output file names 
+#------------------------------------------------------------------------------
+services.TFileService.fileName            : "nts._USER_.proton_absorber.754_0101.000001.root"
+physics.filters.InitStntuple.histFileName : "nts._USER_.proton_absorber.754_0101.000001.stn"
+outputs.detectorOutput.fileName           : "sim._USER_.proton_absorber.754_0101.000001.art"
+#------------------------------------------------------------------------------
+# uncomment to avoid waisting time on the initialization of detailed neutron 
+# cross sections - that shouldn't affect the electron simulation 
+#------------------------------------------------------------------------------
+physics.producers.g4run.physics.physicsListName : "QGSP_BERT"
+
+services.GeometryService.inputFile              : "proton_absorber/754_0101/geom_754_0101.txt"
+physics.producers.generate                      : { @table::Stntuple.producers.CeMLeadingLog }
+#------------------------------------------------------------------------------
+# configure STNTUPLE maker
+#------------------------------------------------------------------------------
+physics.filters.StntupleMakerDe.makeStrawData            : 0
+physics.filters.StntupleMakerDe.makeCalData              : 1
+physics.filters.StntupleMakerDe.genpCollTag              : "generate"
+physics.filters.StntupleMakerDe.makeSimp                 : 2          # save gen signal only
+physics.filters.StntupleMakerDe.makeStepPointMC          : 1
+physics.filters.StntupleMakerDe.spmcBlockName            : [ "SpmcBlock"               , "SpmcBlockVDet"                  ]
+physics.filters.StntupleMakerDe.spmcCollTag              : [ "compressDigiMCs:tracker" , "compressDigiMCs:virtualdetector"]
+physics.filters.StntupleMakerDe.statusG4Tag              : [ "g4run"                   , "g4run"                          ]
+#------------------------------------------------------------------------------
+# currently = choose MVA's of the right sign
+#------------------------------------------------------------------------------
+physics.producers.TrkQualDeMHPar.TrkQualMVA  : { @table::TrkQualNeg.TrkQualMVA }
+physics.producers.TrkQualDeMHDar.TrkQualMVA  : { @table::TrkQualNeg.TrkQualMVA }
+physics.producers.TrkQualDmuMHPar.TrkQualMVA : { @table::TrkQualNeg.TrkQualMVA }
+physics.producers.TrkQualDmuMHDar.TrkQualMVA : { @table::TrkQualNeg.TrkQualMVA }
+#------------------------------------------------------------------------------
+# debugging
+#------------------------------------------------------------------------------
+# physics.producers.CalPatRecDem.diagLevel : 1
+# physics.producers.CalPatRecDmm.diagLevel : 1
+# physics.producers.AvikPID.debugLevel     : 100
+#------------------------------------------------------------------------------
+# everything below is appended by murat/scripts/submit_mu2e_job
+#------------------------------------------------------------------------------

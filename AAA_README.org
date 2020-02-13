@@ -10,6 +10,7 @@
 | 754_0003 | p            | '2020         | none            | gen_g4_time_map |          |
 | 754_0100 | e-           | CeMLeadingLog | default         | full stntupling |          |
 | 754_0101 | e-           | CeMLeadingLog | none            | full stntupling |          |
+| 754_0102 | e-           | Ce/104.97     | none            | full stntupling |          |
 |----------+--------------+---------------+-----------------+-----------------+----------|
 
 * *calculation of N(ejected protons)/pulse*              

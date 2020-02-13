@@ -39,17 +39,17 @@ physics : {
 #------------------------------------------------------------------------------
 # output file names 
 #------------------------------------------------------------------------------
-services.TFileService.fileName            : "nts._USER_.proton_absorber.754_0101.000001.root"
-physics.filters.InitStntuple.histFileName : "nts._USER_.proton_absorber.754_0101.000001.stn"
-outputs.detectorOutput.fileName           : "sim._USER_.proton_absorber.754_0101.000001.art"
+services.TFileService.fileName            : "nts._USER_.proton_absorber.754_0102.000001.root"
+physics.filters.InitStntuple.histFileName : "nts._USER_.proton_absorber.754_0102.000001.stn"
+outputs.detectorOutput.fileName           : "sim._USER_.proton_absorber.754_0102.000001.art"
 #------------------------------------------------------------------------------
 # uncomment to avoid waisting time on the initialization of detailed neutron 
 # cross sections - that shouldn't affect the electron simulation 
 #------------------------------------------------------------------------------
 physics.producers.g4run.physics.physicsListName : "QGSP_BERT"
 
-services.GeometryService.inputFile              : "proton_absorber/754_0101/geom_754_0101.txt"
-physics.producers.generate                      : { @table::Stntuple.producers.CeMLeadingLog }
+services.GeometryService.inputFile              : "proton_absorber/754_0102/geom_754_0102.txt"
+physics.producers.generate                      : { @table::EventGenerator.producers.egun }
 #------------------------------------------------------------------------------
 # configure STNTUPLE maker
 #------------------------------------------------------------------------------

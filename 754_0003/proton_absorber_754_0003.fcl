@@ -6,6 +6,7 @@ BEGIN_PROLOG
   bgHitFiles : @nil
 END_PROLOG
 
+#include "murat/fcl/prolog.fcl"
 #include "Stntuple/fcl/templates.fcl"
 
 process_name : MuonCaptureProtons2020
@@ -15,10 +16,13 @@ outputs      : { @table::Stntuple.outputs   }
 
 physics : {
     producers: { @table::Stntuple.producers }
-    filters  : { @table::Stntuple.filters   }
+    filters  : { @table::Stntuple.filters   
+	StrawChargeDeposition : { @table::murat.StrawChargeDeposition }
+    }
     analyzers: { @table::Stntuple.analyzers }
 
-    p1       : [ @sequence::Stntuple.gen_g4_time_map 
+    p1       : [ @sequence::Stntuple.gen_g4_time_map, 
+		 StrawChargeDeposition
 		]
     
     trigger_paths : [ p1  ]
@@ -28,8 +32,8 @@ physics : {
 #------------------------------------------------------------------------------
 # uncomment the next 2 lines if you want the DST (.art) file to be written out
 #-----------------------------------------------------------------------------
-physics.out                               : [ detectorOutput ]
-outputs.detectorOutput.SelectEvents       : [ p1 ]
+# physics.out                               : [ detectorOutput ]
+# outputs.detectorOutput.SelectEvents       : [ p1 ]
 #------------------------------------------------------------------------------
 # output file names 
 #------------------------------------------------------------------------------

@@ -32,8 +32,8 @@ physics : {
 #------------------------------------------------------------------------------
 # uncomment the next 2 lines if you want the DST (.art) file to be written out
 #-----------------------------------------------------------------------------
-physics.out                               : [ detectorOutput ]
-outputs.detectorOutput.SelectEvents       : [ p1 ]
+# physics.out                               : [ detectorOutput ]
+# outputs.detectorOutput.SelectEvents       : [ p1 ]
 #------------------------------------------------------------------------------
 # output file names 
 #------------------------------------------------------------------------------
